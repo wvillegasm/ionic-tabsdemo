@@ -1,12 +1,10 @@
 
-<div class="bar bar-header bar-positive">
-      <h2 class="title">SISO</h2>
-    </div>
-   <ion-content class="has-header">
-     
-    <ion-pane >
-      
-      <form action="siso-form">
+<ion-pane>
+      <ion-header-bar class="bar-stable">
+        <h1 class="title">SISO</h1>
+      </ion-header-bar>
+      <ion-content>
+		<form action="siso-form">
         <div class="row">
           <div class="col">
             <strong>PIN: </strong>001100
@@ -71,7 +69,5 @@
           Submit
         </button>
       </form>
-      
+      </ion-content>
     </ion-pane>
-     
-   </ion-content>
