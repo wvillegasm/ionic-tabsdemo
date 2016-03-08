@@ -1,1 +1,22 @@
 /* Empty. Add your own CSS if you like */
+
+.sign-status{
+  font-size: 2em;
+  font-weight: bolder;
+  text-align: right;
+  display: block;
+  color: green;
+}
+
+.ion-location, .ion-ios-time{
+  font-size: 2em;
+  color: limegreen;
+}
+
+.list-btn{
+  font-size: 14px;
+}
+
+.padding-sm{
+  padding-right: 4px;
+}

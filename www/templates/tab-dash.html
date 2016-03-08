@@ -1,25 +1,103 @@
-<ion-view view-title="My App">
-
-
+<ion-view view-title="SISO">
   <ion-pane>
 
+    <ion-content>
+      <form >
+        <div class="row">
+          <div class="col">
+            <strong>PIN: </strong>
+            {{user.pin}}
+          </div>
+          <div class="col">
+            <strong>Name: </strong>{{user.name}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <strong>Manager: </strong>{{user.manager}}
+          </div>
+        </div>
+
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Mobile Number or Emergency Contact</span>
+          <input type="text" placeholder="?" value="{{user.contact}}">
+        </label>
 
 
-    <ion-content class="padding">
+        <div class="list">
+          <label for="location" class="item item-input item-select">
+            <div class="input-label">
+              <i class="icon ion-location"></i>
+            </div>
+            <select name="location" id="location" ng-model="record.location">
+              <option value="0" selected>&nbsp;</option>
+              <option value="1">Operations</option>
+              <option value="2">Altmeyer</option>
+              <option value="3">Annex</option>
+              <option value="4">WOC</option>
+              <option value="5">NCC</option>
+              <option value="6">East Low Rise</option>
+              <option value="7">East High Rise</option>
+              <option value="8">West Low Rise</option>
+              <option value="9">West High Rise</option>
+            </select>
+          </label>
 
-      <!--.bar.bar-header.bar-positive>h1.title{My Title}-->
-      <!--button.button{Default}-->
-      <!--button.button-stable{Stable}-->
-      <!--ion-list>ion-radio{value*$$}*5-->
+          <label class="item item-input item-select">
+            <div class="input-label">
+              <i class="icon ion-ios-time"></i>
+            </div>
 
 
+            <!--<ul>
+              <li ng-repeat="cTime in myTimes" class="inline padding-sm">
+                <button class="button button-small button-stable list-btn" ng-click="signIn(cTime)">
+                  {{cTime}}
+                </button>
+              </li>
+            </ul>-->
 
 
+            <select name="sign-in" id="sign-in" ng-model="record.signintime">
+              <option ng-repeat="cTime in myTimes">
+                {{cTime}}
+              </option>
+              <!--<option value="1">2:00 PM</option>
+              <option value="2">2:15 PM</option>
+              <option value="3">2:30 PM</option>
+              <option value="4">2:45 PM</option>-->
+            </select>
+          </label>
+
+
+          <label class="item item-input item-select" ng-show="showSignout()">
+            <div class="input-label">
+              <i class="icon ion-ios-time"></i>
+            </div>
+
+            <select name="sign-out" id="sign-out" ng-model="record.signouttime">
+              <option ng-repeat="cTime in myTimes">
+                {{cTime}}
+              </option>
+              <!--<option value="1">2:00 PM</option>
+              <option value="2">2:15 PM</option>
+              <option value="3">2:30 PM</option>
+              <option value="4">2:45 PM</option>-->
+            </select>
+
+          </label>
+        </div>
+
+        <button class="button button-full {{submitColor}}" ng-click="signIn()" ng-hide="hideSubmit">
+          {{submitLabel}}
+        </button>
+      </form>
     </ion-content>
-
   </ion-pane>
 
-  <ion-footer-bar class="bar-positive">
+<!--  <ion-footer-bar class="bar-positive">
     <div class="title">Footer</div>
-  </ion-footer-bar>
+  </ion-footer-bar>-->
+
 </ion-view>
