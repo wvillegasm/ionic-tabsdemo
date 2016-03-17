@@ -8,6 +8,21 @@
   color: green;
 }
 
+.loc-padd{
+  margin: 3px 5px;
+}
+
+.loc-padd:hover{
+  background-color: #ef473a;
+}
+
+.wrapping-list .item-content, .wrapping-list .item {
+  overflow: initial;
+  white-space: initial;
+}
+
+/*
+
 .ion-location, .ion-ios-time{
   font-size: 2em;
   color: limegreen;
@@ -20,3 +35,4 @@
 .padding-sm{
   padding-right: 4px;
 }
+*/

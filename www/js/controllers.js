@@ -1,34 +1,135 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {
+.controller('DashCtrl', function($scope, $ionicPopup) {
 
   $scope.user = {pin:'001111', name:'Doe, John', manager:'Doe, Jane', contact: '888-555-444'};
-  $scope.record = {location: 'Operations', signintime:'', signouttime:'', saved: false};
-  $scope.locations = ['Operations','Altmeyer','Annex','WOC','NCC','East Low Rise','East High Rise','West Low Rise','West High Rise'];
-  $scope.myTimes = ['1:00 PM','2:00 PM','3:00 PM','4:00 PM'];
+  $scope.record = {locationId:0, signInTime: '', signOutTime:'', status: 'Non-Signed', saved: false};
+  $scope.status = [
+    {id: 1, desc: 'Non-Signed'},
+    {id: 2, desc: 'Signed-In'},
+    {id: 3, desc: 'Signed-Out'},
+  ];
+
+  $scope.locations = [
+    {id:1, "name":'Operations', "checked":false},
+    {id:2, "name":'Altmeyer', "checked":false},
+    {id:3, "name":'Annex', "checked":false},
+    {id:4, "name":'WOC', "checked":false},
+    {id:5, "name":'NCC'},
+    {id:6, "name":'East Low Rise', "checked":false},
+    {id:7, "name":'East High Rise', "checked":false},
+    {id:8, "name":'West Low Rise', "checked":false},
+    {id:9, "name":'West High Rise', "checked":false}
+  ];
+
+  $scope.myTimes = [
+    {"hour": '1:00 PM', "checked":false},
+    {"hour": '2:00 PM', "checked":false},
+    {"hour": '3:00 PM', "checked":false},
+    {"hour": '4:00 PM', "checked":false}
+  ];
+
   $scope.submitLabel = 'Sign In';
   $scope.submitColor = 'button-balanced';
   $scope.hideSubmit = false;
+  $scope.activeBtn = 0;
 
-  $scope.timesh = function(){
-    return ['1:00 PM','2:00 PM','3:00 PM','4:00 PM'];
-  };
+
 
   $scope.signIn = function(){
     console.log($scope.record);
 
-    if(!$scope.record.saved){
-      $scope.record.saved = true;
-      $scope.submitLabel = 'Sign Out';
-      $scope.submitColor = 'button-assertive';
+    var message = "";
+    if($scope.record.status === 'Non-Signed'){
+      message = "You will not be able to change the Location and Sign-In Time after submit";
     }else{
-      $scope.hideSubmit = true;
+      message = "Please confirm your Signing-out";
     }
+
+    var confirmPopup = $ionicPopup.confirm({
+      title: '<b>Submitting Time</b>',
+      template: message
+    });
+
+    confirmPopup.then(function(res) {
+      if(res) {
+        if($scope.record.status === 'Non-Signed') {
+          $scope.record.saved = true;
+          $scope.record.status = "Signed-In";
+          $scope.submitLabel = 'Sign Out';
+          $scope.submitColor = 'button-assertive';
+
+          $scope.resetTimes();
+
+          // TODO save to server
+
+        }else if($scope.record.status === 'Signed-In'){
+          $scope.record.status = "Signed-Out";
+          $scope.hideSubmit = true;
+
+          // TODO save to server
+        }else{
+
+        }
+      } else {
+        // console.log('Cancel');
+
+      }
+    });
+
+
   };
 
-  $scope.showSignout = function(){
-    return $scope.record.signintime.length > 0 && $scope.record.saved;
+  $scope.enableSubmit = function(){
+    return ($scope.record.status === 'Non-Signed' && $scope.record.locationId > 0 && $scope.record.signInTime.length > 0) ||
+      ($scope.record.status === 'Signed-In' && $scope.record.signOutTime.length > 0 )
   };
+
+  $scope.selectLocation = function (locEl) {
+    if($scope.record.status !== 'Non-Signed') return;
+    angular.forEach($scope.locations, function (el) {
+      el.checked = false;
+    });
+
+    locEl.checked = !locEl.checked;
+    $scope.record.locationId = locEl.id;
+
+  };
+
+  $scope.singInTime = function (timeEl) {
+    $scope.resetTimes();
+    timeEl.checked = true;
+    $scope.record.signInTime = timeEl.hour;
+  };
+
+  $scope.singOutTime = function (timeEl) {
+    $scope.resetTimes();
+    timeEl.checked = true;
+    $scope.record.signOutTime = timeEl.hour;
+  };
+
+  $scope.resetTimes = function () {
+    angular.forEach($scope.myTimes, function (el) {
+      el.checked = false;
+    });
+  };
+
+  $scope.resetLocations = function () {
+    angular.forEach($scope.locations, function (el) {
+      el.checked = false;
+    });
+  };
+
+  $scope.resetForm = function () {
+    $scope.resetTimes();
+    $scope.resetLocations();
+
+    $scope.record = {locationId:0, signInTime: '', signOutTime:'', status: 'Non-Signed', saved: false};
+  };
+
+
+
+
 
 })
 

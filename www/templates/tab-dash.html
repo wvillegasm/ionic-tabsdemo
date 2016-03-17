@@ -1,21 +1,36 @@
 <ion-view view-title="SISO">
+  <ion-nav-buttons side="right">
+    <button class="button button-positive ion-home"
+            ng-click="resetForm();"
+            ng-disabled="record.status !== 'Signed-Out'">
+
+    </button>
+  </ion-nav-buttons>
   <ion-pane>
 
+
     <ion-content>
-      <form >
+      <form>
         <div class="row">
           <div class="col">
             <strong>PIN: </strong>
-            {{user.pin}}
+            <input type="text" ng-model="user.pin">
           </div>
           <div class="col">
-            <strong>Name: </strong>{{user.name}}
+            <strong>Name: </strong>
+            <input type="text" ng-model="user.name">
           </div>
         </div>
 
         <div class="row">
           <div class="col">
-            <strong>Manager: </strong>{{user.manager}}
+            <strong>Manager: </strong>
+            <input type="text" ng-model="user.manager">
+          </div>
+          <div class="col"><strong>Status</strong>
+            <p>
+              {{record.status}}
+            </p>
           </div>
         </div>
 
@@ -25,79 +40,64 @@
         </label>
 
 
-        <div class="list">
-          <label for="location" class="item item-input item-select">
-            <div class="input-label">
-              <i class="icon ion-location"></i>
-            </div>
-            <select name="location" id="location" ng-model="record.location">
-              <option value="0" selected>&nbsp;</option>
-              <option value="1">Operations</option>
-              <option value="2">Altmeyer</option>
-              <option value="3">Annex</option>
-              <option value="4">WOC</option>
-              <option value="5">NCC</option>
-              <option value="6">East Low Rise</option>
-              <option value="7">East High Rise</option>
-              <option value="8">West Low Rise</option>
-              <option value="9">West High Rise</option>
-            </select>
-          </label>
+        <div class="list wrapping-list">
 
-          <label class="item item-input item-select">
-            <div class="input-label">
-              <i class="icon ion-ios-time"></i>
-            </div>
+          <div class="item">
 
+            <button class="button icon-left loc-padd"
+                    ng-repeat="loc in locations"
+                    ng-class="{'button-assertive': loc.checked || loc.id === record.locationId, 'ion-location': loc.checked || loc.id === record.locationId, 'button-stable': !loc.checked}"
+                    ng-click="selectLocation(loc);"
+                    ng-model="record.location">
+              {{loc.name}}
+            </button>
 
-            <!--<ul>
-              <li ng-repeat="cTime in myTimes" class="inline padding-sm">
-                <button class="button button-small button-stable list-btn" ng-click="signIn(cTime)">
-                  {{cTime}}
-                </button>
-              </li>
-            </ul>-->
+          </div>
 
+          <div class="item">
+            <button class="button icon-left loc-padd"
+                    ng-repeat="cTime in myTimes"
+                    ng-if="record.status === 'Non-Signed'"
+                    ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signInTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signInTime, 'button-stable': !cTime.checked}"
+                    ng-click="singInTime(cTime);"
+                    ng-model="record.signInTime">
+              {{cTime.hour}}
+            </button>
+            <button class="button icon-left button-assertive ion-ios-time"
+                    ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
+              {{record.signInTime}}
+            </button>
+          </div>
 
-            <select name="sign-in" id="sign-in" ng-model="record.signintime">
-              <option ng-repeat="cTime in myTimes">
-                {{cTime}}
-              </option>
-              <!--<option value="1">2:00 PM</option>
-              <option value="2">2:15 PM</option>
-              <option value="3">2:30 PM</option>
-              <option value="4">2:45 PM</option>-->
-            </select>
-          </label>
+          <div class="item" ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
+            <button class="button icon-left loc-padd"
+                    ng-repeat="cTime in myTimes"
+                    ng-if="record.status === 'Signed-In'"
+                    ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signOutTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signOutTime, 'button-stable': !cTime.checked}"
+                    ng-click="singOutTime(cTime);"
+                    ng-model="record.signOutTime">
+              {{cTime.hour}}
+            </button>
+            <button class="button icon-left button-assertive ion-ios-time"
+                    ng-show="record.status === 'Signed-Out'">
+              {{record.signOutTime}}
+            </button>
+          </div>
 
+          <button class="button button-full {{submitColor}}"
+                  ng-click="signIn()" ng-disabled="!enableSubmit()">
+            {{submitLabel}}
+          </button>
 
-          <label class="item item-input item-select" ng-show="showSignout()">
-            <div class="input-label">
-              <i class="icon ion-ios-time"></i>
-            </div>
-
-            <select name="sign-out" id="sign-out" ng-model="record.signouttime">
-              <option ng-repeat="cTime in myTimes">
-                {{cTime}}
-              </option>
-              <!--<option value="1">2:00 PM</option>
-              <option value="2">2:15 PM</option>
-              <option value="3">2:30 PM</option>
-              <option value="4">2:45 PM</option>-->
-            </select>
-
-          </label>
         </div>
 
-        <button class="button button-full {{submitColor}}" ng-click="signIn()" ng-hide="hideSubmit">
-          {{submitLabel}}
-        </button>
+
       </form>
     </ion-content>
   </ion-pane>
 
-<!--  <ion-footer-bar class="bar-positive">
-    <div class="title">Footer</div>
-  </ion-footer-bar>-->
+  <!--  <ion-footer-bar class="bar-positive">
+      <div class="title">Footer</div>
+    </ion-footer-bar>-->
 
 </ion-view>
