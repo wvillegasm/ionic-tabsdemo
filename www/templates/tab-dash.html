@@ -1,6 +1,6 @@
 <ion-view view-title="SISO">
   <ion-nav-buttons side="right">
-    <button class="button button-positive ion-home"
+	<button class="button button-positive ion-home"
             ng-click="resetForm();"
             ng-disabled="record.status !== 'Signed-Out'">
 
@@ -14,7 +14,7 @@
         <div class="row">
           <div class="col">
             <strong>PIN: </strong>
-            <input type="text" ng-model="user.pin">
+            <input type="text" ng-model="user.pin" ng-maxlength="6">
           </div>
           <div class="col">
             <strong>Name: </strong>
@@ -43,7 +43,10 @@
         <div class="list wrapping-list">
 
           <div class="item">
-
+			<label>
+				<strong>Location:</strong>
+			</label>
+			<BR>
             <button class="button icon-left loc-padd"
                     ng-repeat="loc in locations"
                     ng-class="{'button-assertive': loc.checked || loc.id === record.locationId, 'ion-location': loc.checked || loc.id === record.locationId, 'button-stable': !loc.checked}"
@@ -55,6 +58,10 @@
           </div>
 
           <div class="item">
+			<label>
+				<strong>Check-In Time:</strong>
+			</label>
+			<BR>
             <button class="button icon-left loc-padd"
                     ng-repeat="cTime in myTimes"
                     ng-if="record.status === 'Non-Signed'"
@@ -70,6 +77,10 @@
           </div>
 
           <div class="item" ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
+			<label>
+				<strong>Check-Out Time:</strong>
+			</label>
+			<BR>
             <button class="button icon-left loc-padd"
                     ng-repeat="cTime in myTimes"
                     ng-if="record.status === 'Signed-In'"
