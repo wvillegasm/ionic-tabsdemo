@@ -2,7 +2,7 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope, $ionicPopup) {
 
-  $scope.user = {pin:'001111', name:'Doe, John', manager:'Doe, Jane', contact: '888-555-444'};
+  $scope.user = {pin:'010101', name:'Doe, John', manager:'Doe, Jane', contact: '888-555-444'};
   $scope.record = {locationId:0, signInTime: '', signOutTime:'', status: 'Non-Signed', saved: false};
   $scope.status = [
     {id: 1, desc: 'Non-Signed'},
@@ -123,6 +123,9 @@ angular.module('starter.controllers', [])
   $scope.resetForm = function () {
     $scope.resetTimes();
     $scope.resetLocations();
+
+	$scope.submitLabel = 'Sign In';
+	$scope.submitColor = 'button-balanced';
 
     $scope.record = {locationId:0, signInTime: '', signOutTime:'', status: 'Non-Signed', saved: false};
   };
