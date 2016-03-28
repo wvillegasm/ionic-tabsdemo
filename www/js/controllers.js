@@ -22,12 +22,60 @@ angular.module('starter.controllers', [])
     {id:9, "name":'West High Rise', "checked":false}
   ];
 
-  $scope.myTimes = [
-    {"hour": '1:00 PM', "checked":false},
-    {"hour": '2:00 PM', "checked":false},
-    {"hour": '3:00 PM', "checked":false},
-    {"hour": '4:00 PM', "checked":false}
-  ];
+  $scope.myDynamicTimes = function(){
+	//set the current time rounded to nearest quarter
+	var roundedDate = new Date();
+	var rounded = (Math.round(new Date().getMinutes()/15) * 15) % 60;
+	roundedDate.setMinutes(rounded);
+	
+	var d = new Date();
+	d.setMinutes(roundedDate.getMinutes()-60)
+	var pastTime60 = d.toLocaleTimeString();
+	
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()-45)
+	var pastTime45 = d.toLocaleTimeString();
+	
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()-30)
+	var pastTime30 = d.toLocaleTimeString();
+	
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()-15)
+	var pastTime15 = d.toLocaleTimeString();
+	
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()+15)
+	var futureTime15 = d.toLocaleTimeString();
+	
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()+30)
+	var futureTime30 = d.toLocaleTimeString();
+
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()+45)
+	var futureTime45 = d.toLocaleTimeString();
+
+	d = new Date();
+	d.setMinutes(roundedDate.getMinutes()+60)
+	var futureTime60 = d.toLocaleTimeString();
+	
+	d = new Date();
+	
+	$scope.myTimes = [
+		{"hour": pastTime60, "checked":false},
+		{"hour": pastTime45, "checked":false},
+		{"hour": pastTime30, "checked":false},
+		{"hour": pastTime15, "checked":false},
+		{"hour": roundedDate.toLocaleTimeString(), "checked":false},
+		{"hour": futureTime15, "checked":false},
+		{"hour": futureTime30, "checked":false},
+		{"hour": futureTime45, "checked":false},
+		{"hour": futureTime60, "checked":false}
+	];
+  };
+
+  window.setInterval($scope.myDynamicTimes, 100);
 
   $scope.submitLabel = 'Sign In';
   $scope.submitColor = 'button-balanced';
