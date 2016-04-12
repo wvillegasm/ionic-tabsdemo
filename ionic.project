@@ -1,4 +1,10 @@
 {
-  "name": "example",
-  "app_id": ""
+  "name": "SISO",
+  "app_id": "",
+  "proxies" : [
+    {
+      "path" : "/siso",
+      "proxyUrl" : "http://localhost:3000/siso"
+    }
+  ]
 }

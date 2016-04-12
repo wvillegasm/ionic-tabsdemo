@@ -1,6 +1,6 @@
 <ion-view view-title="SISO">
   <ion-nav-buttons side="right">
-	<button class="button button-positive ion-home"
+    <button class="button button-positive ion-home"
             ng-click="resetForm();"
             ng-disabled="record.status !== 'Signed-Out'">
 
@@ -8,107 +8,106 @@
   </ion-nav-buttons>
   <ion-pane>
 
-
     <ion-content>
       <form>
-        <div class="row">
+        <div class="row list">
           <div class="col">
-            <strong>PIN: </strong>
-            <input type="text" ng-model="user.pin" ng-maxlength="6">
+            <label class="item item-input item-floating-label">
+              <span class="input-label">PIN:</span>
+              <input type="text" placeholder="PIN" ng-model="user.pin" ng-maxlength="6" ng-keydown="onPINKeydown($event)" ng-keyup="onPINKeyup($event)">
+            </label>
+            <!--<strong>PIN: </strong>-->
           </div>
           <div class="col">
-            <strong>Name: </strong>
-            <input type="text" ng-model="user.name">
+            <!--<strong>Name: </strong>-->
+            <label class="item item-input item-floating-label">
+              <span class="input-label">Name:</span>
+              <input type="text" placeholder="Name" ng-model="user.name">
+            </label>
           </div>
         </div>
 
         <div class="row">
           <div class="col">
-            <strong>Manager: </strong>
-            <input type="text" ng-model="user.manager">
+            <label class="item item-input item-floating-label">
+              <span class="input-label">Manager:</span>
+              <input type="text" placeholder="Manager" ng-model="user.manager">
+            </label>
           </div>
-          <div class="col"><strong>Status</strong>
-            <p>
-              {{record.status}}
-            </p>
+          <div class="col">
+            <label class="item item-input item-stacked-label">
+              <span class="input-label">Status:</span>
+              <input type="text" placeholder="" ng-model="record.status" ng-readonly="true">
+            </label>
           </div>
         </div>
 
-        <label class="item item-input item-stacked-label">
-          <span class="input-label">Mobile Number or Emergency Contact</span>
-          <input type="text" placeholder="?" value="{{user.contact}}">
-        </label>
+        <div class="col">
+          <label class="item item-input item-stacked-label">
+            <span class="input-label">Mobile Number or Emergency Contact</span>
+            <input type="text" placeholder="" value="{{user.contact}}">
+          </label>
+        </div>
 
-
-        <div class="list wrapping-list">
-
-          <div class="item">
-			<label>
-				<strong>Location:</strong>
-			</label>
-			<BR>
-            <button class="button icon-left loc-padd"
-                    ng-repeat="loc in locations"
-                    ng-class="{'button-assertive': loc.checked || loc.id === record.locationId, 'ion-location': loc.checked || loc.id === record.locationId, 'button-stable': !loc.checked}"
-                    ng-click="selectLocation(loc);"
-                    ng-model="record.location">
-              {{loc.name}}
-            </button>
-
-          </div>
-
-          <div class="item">
-			<label>
-				<strong>Check-In Time:</strong>
-			</label>
-			<BR>
-            <button class="button icon-left loc-padd"
-                    ng-repeat="cTime in myTimes"
-                    ng-if="record.status === 'Non-Signed'"
-                    ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signInTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signInTime, 'button-stable': !cTime.checked}"
-                    ng-click="singInTime(cTime);"
-                    ng-model="record.signInTime">
-              {{cTime.hour}}
-            </button>
-            <button class="button icon-left button-assertive ion-ios-time"
-                    ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
-              {{record.signInTime}}
-            </button>
-          </div>
-
-          <div class="item" ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
-			<label>
-				<strong>Check-Out Time:</strong>
-			</label>
-			<BR>
-            <button class="button icon-left loc-padd"
-                    ng-repeat="cTime in myTimes"
-                    ng-if="record.status === 'Signed-In'"
-                    ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signOutTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signOutTime, 'button-stable': !cTime.checked}"
-                    ng-click="singOutTime(cTime);"
-                    ng-model="record.signOutTime">
-              {{cTime.hour}}
-            </button>
-            <button class="button icon-left button-assertive ion-ios-time"
-                    ng-show="record.status === 'Signed-Out'">
-              {{record.signOutTime}}
-            </button>
-          </div>
-
-          <button class="button button-full {{submitColor}}"
-                  ng-click="signIn()" ng-disabled="!enableSubmit()">
-            {{submitLabel}}
+        <div class="item item-divider">
+          Locations
+        </div>
+        <div class="wrapping-list">
+          <button class="button icon-left loc-padd"
+                  ng-repeat="loc in locations"
+                  ng-class="{'button-assertive': loc.checked || loc.id === record.locationId, 'ion-location': loc.checked || loc.id === record.locationId, 'button-stable': !loc.checked}"
+                  ng-click="selectLocation(loc);"
+                  ng-model="record.location">
+            {{loc.name}}
           </button>
-
         </div>
 
+        <div class="item item-divider">
+          Check-In Time
+        </div>
+        <div class="wrapping-list">
+          <button class="button icon-left loc-padd"
+                  ng-repeat="cTime in myTimes"
+                  ng-if="record.status === 'Non-Signed'"
+                  ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signInTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signInTime, 'button-stable': !cTime.checked}"
+                  ng-click="singInTime(cTime);"
+                  ng-model="record.signInTime">
+            {{cTime.hour}}
+          </button>
+          <button class="button loc-padd icon-left button-assertive ion-ios-time"
+                  ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
+            {{record.signInTime}}
+          </button>
+        </div>
+
+        <div class="item item-divider"
+             ng-show="record.status === 'Signed-In' || record.status === 'Signed-Out'">
+          Check-Out Time
+        </div>
+
+        <div class="wrapping-list">
+          <button class="button icon-left loc-padd"
+                  ng-repeat="cTime in myTimes"
+                  ng-if="record.status === 'Signed-In'"
+                  ng-class="{'button-assertive': cTime.checked || cTime.hour === record.signOutTime, 'ion-ios-time': cTime.checked || cTime.hour === record.signOutTime, 'button-stable': !cTime.checked}"
+                  ng-click="singOutTime(cTime);"
+                  ng-model="record.signOutTime">
+            {{cTime.hour}}
+          </button>
+          <button class="button loc-padd icon-left button-assertive ion-ios-time"
+                  ng-show="record.status === 'Signed-Out'">
+            {{record.signOutTime}}
+          </button>
+        </div>
+
+        <button class="button button-full {{submitColor}}"
+                ng-click="signIn()"
+                ng-disabled="!enableSubmit()">
+          {{submitLabel}}
+        </button>
 
       </form>
     </ion-content>
   </ion-pane>
-
-  <!--  <ion-footer-bar class="bar-positive">
-      <div class="title">Footer</div>
-    </ion-footer-bar>-->
 
 </ion-view>

@@ -1,7 +1,7 @@
 {
-  "name": "example",
-  "version": "1.1.1",
-  "description": "example: An Ionic project",
+  "name": "SISO",
+  "version": "1.0.0",
+  "description": "Sign In - Sign Out App",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
@@ -22,5 +22,8 @@
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "android",
+    "ios"
+  ]
 }

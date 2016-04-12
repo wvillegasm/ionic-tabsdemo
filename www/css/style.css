@@ -21,6 +21,12 @@
   white-space: initial;
 }
 
+.item{
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+}
+
 /*
 
 .ion-location, .ion-ios-time{

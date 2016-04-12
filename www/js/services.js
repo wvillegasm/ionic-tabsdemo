@@ -1,5 +1,11 @@
-angular.module('starter.services', [])
-
+angular.module('starter.services', ['ngResource'])
+.factory('SISO', function($resource){
+      return $resource('/siso', {}, {
+        save : {method: 'POST', cache: false, responseType: 'json'},
+        get : {method: 'GET', url: '/siso/:pin/status/:status', params: {pin : '@pin', status: '@status'}, cache: false, responseType : 'json' },
+        update : {method: 'PUT', url: '/siso/id/:id', params: {id:'@_id'},responseType: 'json'}
+      });
+})
 .factory('Chats', function() {
   // Might use a resource here that returns a JSON array
 

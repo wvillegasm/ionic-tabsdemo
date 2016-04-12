@@ -5,14 +5,15 @@ angular.module('siso.services', [])
      var sisoRec = {locationId: 0, signInTime: '', signOutTime: '', status: 'Non-Signed', saved: false};*/
 
     var deferred = $q.defer();
-    $http.get('http://localhost:3000/getUser').then(function (data) {
-      deferred.resolve(data);
-    });
 
-    this.getCurrentUser = function () {
+    this.getCurrentUser = function (pin) {
+      pin = pin || 0;
+      $http.get('http://localhost:3000/user/' + pin).then(function (data) {
+        deferred.resolve(data);
+      });
+
       return deferred.promise;
     };
-
 
   }).service('RecordService', function ($http, $q) {
 
@@ -24,6 +25,7 @@ angular.module('siso.services', [])
   this.getCurrentRecord = function () {
     return deferred.promise;
   };
+
 }).service('SaveSISOService', function ($http, $q) {
 
   var deferred = $q.defer();
