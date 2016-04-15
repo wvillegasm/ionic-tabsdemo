@@ -1,7 +1,7 @@
 angular.module('starter.controllers', ['ionic'])
 
-  .controller('DashCtrl', ['$scope', '$ionicPopup', '$interval', '$ionicLoading', 'SISO',
-    function ($scope, $ionicPopup, $interval, $ionicLoading, SISO) {
+  .controller('DashCtrl', ['$scope', '$ionicPopup', '$interval', '$ionicLoading', 'SISO', 'UserFactory',
+    function ($scope, $ionicPopup, $interval, $ionicLoading, SISO, UserFactory) {
 
       $scope.user = {pin: "", name: "", manager: "", contact: ""};
       $scope.record = {status: 'Non-Signed', signInTime: '', signOutTime: '', locationId: 0};
@@ -27,12 +27,7 @@ angular.module('starter.controllers', ['ionic'])
         {id: 9, "name": 'West High Rise', "checked": false}
       ];
 
-      $scope.myTimes = [
-        {"hour": '1:00 PM', "checked": false},
-        {"hour": '2:00 PM', "checked": false},
-        {"hour": '3:00 PM', "checked": false},
-        {"hour": '4:00 PM', "checked": false}
-      ];
+      $scope.myTimes = [];
 
       $scope.submitLabel = 'Sign In';
       $scope.submitColor = 'button-balanced';
@@ -41,59 +36,44 @@ angular.module('starter.controllers', ['ionic'])
 
 
       $scope.myDynamicTimes = function () {
-        //set the current time rounded to nearest quarter
-        var roundedDate = new Date();
-        var rounded = (Math.round(new Date().getMinutes() / 15) * 15) % 60;
-        roundedDate.setMinutes(rounded);
 
-        var d = new Date();
-        d.setMinutes(roundedDate.getMinutes() - 60)
-        var pastTime60 = d.toLocaleTimeString();
+        var currentTime = new Date();
+        currentTime.setMinutes(-30);
+        var curMinute = currentTime.getMinutes();
+        var rawQuarter = precision(curMinute / 15);
+        var quarter = Math.ceil(rawQuarter);
+        if (quarter === 0) quarter = 1;
 
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() - 45)
-        var pastTime45 = d.toLocaleTimeString();
+        if (rawQuarter <= 3) {
+          currentTime.setMinutes(quarter * 15, 0, 0);
+        } else {
+          currentTime.setHours(currentTime.getHours() + 1, 0, 0, 0);
+        }
 
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() - 30)
-        var pastTime30 = d.toLocaleTimeString();
+        // creates times for every lapse of times (15 minutes --> [1000 * 60 * 15])
+        if ($scope.myTimes.length === 0 || getLapseOfTime(currentTime) !== $scope.myTimes[0]['hour']) {
+          for (var i = 0; i < 8; i++) {
+            $scope.myTimes[i] = {"hour": getLapseOfTime(currentTime), "checked": false};
+            currentTime = new Date(currentTime.getTime() + (1000 * 60 * 15));
+          }
+        }
 
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() - 15)
-        var pastTime15 = d.toLocaleTimeString();
+        function precision(n) {
+          return (n * 100) / 100;
+        }
 
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() + 15)
-        var futureTime15 = d.toLocaleTimeString();
+        function getLapseOfTime(date) {
+          return date.toLocaleTimeString().replace(/:\d+ /, ' ');
+        }
 
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() + 30)
-        var futureTime30 = d.toLocaleTimeString();
-
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() + 45)
-        var futureTime45 = d.toLocaleTimeString();
-
-        d = new Date();
-        d.setMinutes(roundedDate.getMinutes() + 60)
-        var futureTime60 = d.toLocaleTimeString();
-
-        d = new Date();
-
-        $scope.myTimes = [
-          {"hour": pastTime60, "checked": false},
-          {"hour": pastTime45, "checked": false},
-          {"hour": pastTime30, "checked": false},
-          {"hour": pastTime15, "checked": false},
-          {"hour": roundedDate.toLocaleTimeString(), "checked": false},
-          {"hour": futureTime15, "checked": false},
-          {"hour": futureTime30, "checked": false},
-          {"hour": futureTime45, "checked": false},
-          {"hour": futureTime60, "checked": false}
-        ];
       };
 
-      $interval($scope.myDynamicTimes, 1000 * 5);
+
+      // calculate for first-time
+      $scope.myDynamicTimes();
+
+      // recalculate every 5 min ---> [1000 * 60 * 5]
+      $interval($scope.myDynamicTimes, 1000 * 60 * 1);
 
       $scope.submitLabel = 'Sign In';
       $scope.submitColor = 'button-balanced';
@@ -102,7 +82,6 @@ angular.module('starter.controllers', ['ionic'])
 
 
       $scope.signIn = function () {
-        console.log($scope.record);
 
         var message = "";
         if ($scope.record.status === 'Non-Signed') {
@@ -120,13 +99,29 @@ angular.module('starter.controllers', ['ionic'])
           if (res) {
             if (typeof $scope.record['_id'] === 'undefined') {
 
-              $scope.record.saved = true;
+              //$scope.record.saved = true;
               $scope.record.status = "Signed-In";
               $scope.record.pin = $scope.user.pin;
               $scope.submitLabel = 'Sign Out';
               $scope.submitColor = 'button-assertive';
 
               $scope.resetTimes();
+
+              console.log('User on Factory: ', UserFactory.get());
+              console.log('User on Controller: ', $scope.user);
+
+              if (UserFactory.get().pin === "") {
+                SISO.saveUser($scope.user, function (userRec) {
+                  if (userRec.success && userRec.record !== null) {
+                    UserFactory.set({
+                      pin: $scope.user.pin,
+                      name: $scope.user.name,
+                      manager: $scope.user.manager,
+                      contact: $scope.user.contact
+                    });
+                  }
+                });
+              }
 
               // TODO save to server
               SISO.save($scope.record, function (record) {
@@ -135,10 +130,11 @@ angular.module('starter.controllers', ['ionic'])
                     var r = record.records[0];
                     $scope.record['_id'] = r['_id'];
                     $scope.record['__v'] = r['__v'];
+
                   }
                 }
-                console.log('Result of saving ', record);
-                console.log('Current Record ', $scope.record);
+
+
               });
 
             } else if ($scope.record.status === 'Signed-In') {
@@ -221,26 +217,38 @@ angular.module('starter.controllers', ['ionic'])
       };
 
       $scope.onPINKeyup = function (keyCode) {
-
+        console.log('User on Factory', UserFactory.get());
         if (typeof keyCode.srcElement.value !== 'undefined' && keyCode.srcElement.value.length === 6) {
-          console.info('KeyUp', keyCode);
+
+          console.log('User on Factory', UserFactory.get());
+          console.log('PIN Captured', keyCode.srcElement.value);
+
+          if (UserFactory.get().pin !== keyCode.srcElement.value) {
+            SISO.getUser({pin: keyCode.srcElement.value}, function (user) {
+              if (user.success && user.record !== null) {
+                UserFactory.set({
+                  pin: user.record.pin,
+                  name: user.record.name,
+                  manager: user.record.manager,
+                  contact: user.record.contact
+                });
+                $scope.user = user.record;
+              } else {
+                UserFactory.set({pin: "", name: "", manager: "", contact: ""});
+                $scope.user = {pin: keyCode.srcElement.value, name: "", manager: "", contact: ""};
+              }
+            });
+          } else {
+            $scope.user = UserFactory.get();
+          }
 
           SISO.get({pin: keyCode.srcElement.value, status: 'Signed-In'}, function (record) {
             if (record.success && record.records[0]) {
               $scope.selectLocation(record.records[0]['locationId']);
               $scope.record = record.records[0];
             }
-            console.log('What I get: ', record);
           });
 
-          /*var userPromise = SISOService.getCurrentUser(keyCode.srcElement.value);
-           userPromise.then(function (user) {
-           console.log('Success:', user.data);
-           $scope.user = user.data;
-           }, function (err) {
-           console.error('Error: ', err);
-           });
-           */
         }
       };
 
@@ -256,7 +264,7 @@ angular.module('starter.controllers', ['ionic'])
 
     }])
 
-  .controller('ChatsCtrl', function ($scope, Chats) {
+  .controller('ChatsCtrl', function ($scope, SISO, UserFactory) {
     // With the new view caching in Ionic, Controllers are only called
     // when they are recreated or on app start, instead of every page change.
     // To listen for when this page is active (for example, to refresh data),
@@ -265,10 +273,22 @@ angular.module('starter.controllers', ['ionic'])
     //$scope.$on('$ionicView.enter', function(e) {
     //});
 
-    $scope.chats = Chats.all();
-    $scope.remove = function (chat) {
-      Chats.remove(chat);
+    var pin = UserFactory.get().pin;
+    $scope.records = [];
+
+
+    $scope.loadRecords = function () {
+      SISO.list({pin: pin}, function (record) {
+        if (record.success && record.records.length > 0) {
+          $scope.records = record.records;
+        }
+      });
     };
+
+    if (pin) {
+      $scope.loadRecords();
+    }
+
   })
 
   .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {

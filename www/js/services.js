@@ -1,10 +1,33 @@
-angular.module('starter.services', ['ngResource'])
+angular.module('starter.services', ['ngResource', 'ngStorage'])
 .factory('SISO', function($resource){
+
       return $resource('/siso', {}, {
         save : {method: 'POST', cache: false, responseType: 'json'},
         get : {method: 'GET', url: '/siso/:pin/status/:status', params: {pin : '@pin', status: '@status'}, cache: false, responseType : 'json' },
-        update : {method: 'PUT', url: '/siso/id/:id', params: {id:'@_id'},responseType: 'json'}
+        update : {method: 'PUT', url: '/siso/id/:id', params: {id:'@_id'},responseType: 'json'},
+        list : {method: 'GET', url: '/siso/list/:pin', params: {pin:'@pin'}, responseType: 'json'},
+        getUser : {method: 'GET', url: '/siso/user/:pin', params: {pin:'@pin'}, responseType: 'json'},
+        saveUser : {method: 'POST', url: '/siso/user', cache: false, responseType: 'json'}
       });
+})
+.factory('UserFactory', function ($localStorage) {
+
+  $localStorage = $localStorage.$default({
+    userData : {pin: "", name: "", manager: "", contact: ""}
+  });
+
+  var saveUser = function (user) {
+    $localStorage.userData = user;
+  };
+
+  var getUser = function () {
+    return $localStorage.userData;
+  };
+
+  return {
+    set : saveUser,
+    get : getUser
+  };
 })
 .factory('Chats', function() {
   // Might use a resource here that returns a JSON array

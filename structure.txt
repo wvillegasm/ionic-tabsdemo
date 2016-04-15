@@ -336,6 +336,9 @@ db.sisousers.save({'pin':'101010', 'name':'Willy', 'manager':'John Axe', 'contac
 
 
 ***************************************************************************
+ionic platform add android
+ionic build android --release
+
 Sign-In apk
 
  keytool -genkey -v -keystore sisodemoapp.keystore -alias sisodemo -keyalg RSA -keysize 2048 -validity 10000
